@@ -1,0 +1,26 @@
+{{ define "cards" }}
+
+<div class="ui cards">
+{{ range .Cards }}
+    <div class="card controller-card" onclick="handleCardClick({{ .Value }})">
+        <div class="content">
+            <div class="header">
+            {{ .Name }}
+            </div>
+            <div class="meta">
+            {{ .Meta }}
+            </div>
+            <div class="description">
+            {{ .Description }}
+            </div>
+        </div>
+    </div>
+{{ end }}
+</div>
+<script>
+    function handleCardClick(){
+
+    }
+</script>
+
+{{end}}
