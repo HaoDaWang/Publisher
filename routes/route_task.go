@@ -1,11 +1,12 @@
 package routes
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"publisher/JSON"
 	"publisher/cli"
+	"strconv"
 	"time"
 )
 
@@ -15,21 +16,23 @@ type TasksPayload struct {
 
 func AddTask(res http.ResponseWriter, req *http.Request){
 	err := req.ParseForm()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	branch := req.PostFormValue("branch")
+	env := req.PostFormValue("env")
+	envI, err := strconv.Atoi(env)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	task := cli.Task{
-		Id:time.Now(),
-	}
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	decoder := json.NewDecoder(req.Body)
-	defer req.Body.Close()
-
-	err = decoder.Decode(task)
-
-	if err != nil {
-		log.Fatal(err)
+		Id: time.Now().Unix(),
+		Env: envI,
+		Branch: branch,
 	}
 
 	task.Start()
@@ -38,23 +41,29 @@ func AddTask(res http.ResponseWriter, req *http.Request){
 }
 
 func RemoveTask(res http.ResponseWriter, req *http.Request){
-
-}
-
-func GetTasks(res http.ResponseWriter, req *http.Request){
-	tasks := cli.GetTasks()
-
-	resBody, err := json.Marshal(Response{
-		payload: TasksPayload{
-			Tasks:tasks,
-		},
-	})
+	err := req.ParseForm()
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(tasks, resBody)
+	id, err := strconv.ParseInt(req.PostFormValue("id"), 10, 64)
 
-	fmt.Fprintln(res, tasks)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cli.Stop(id)
+
+	fmt.Fprintln(res, "done")
+}
+
+func GetTasks(res http.ResponseWriter, req *http.Request){
+	tasks := cli.GetTasks()
+
+	json := JSON.H{
+		"tasks": tasks,
+	}
+
+	fmt.Fprintln(res, json.Stringify())
 }

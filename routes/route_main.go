@@ -2,14 +2,11 @@ package routes
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
-	"publisher/cli"
 	"publisher/utils"
-	"time"
 )
 
 type Card struct {
@@ -22,23 +19,6 @@ type Card struct {
 
 type Envs struct {
 	Cards []Card  `json:"envs"`
-}
-
-func addTask(env int, branch string) bool {
-	task := cli.Task{
-		Name:fmt.Sprintf("部署%s", cli.TaskNameMap[env]),
-		Branch: branch,
-		Id: time.Now(),
-		Env: env,
-	}
-
-	task.Start()
-
-	return true
-}
-
-func removeTask(id time.Time){
-	cli.Stop(id)
 }
 
 func Index(res http.ResponseWriter, req *http.Request){
@@ -60,7 +40,7 @@ func Index(res http.ResponseWriter, req *http.Request){
 
 	utils.SendTpl(
 		res,
-		[]string{"index", "cards", "terminals"},
+		[]string{"index", "cards", "terminals", "branch"},
 		template.FuncMap{},
 		envs,
 	)
