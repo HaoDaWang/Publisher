@@ -1,0 +1,14 @@
+#branch-container {
+    width: 300px !important;
+}
+
+.branch-content {
+    padding: 30px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu {
+    max-height: 300px !important;
+}

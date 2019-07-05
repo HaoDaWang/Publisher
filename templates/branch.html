@@ -1,0 +1,80 @@
+{{ define "branch" }}
+<link rel="stylesheet" href="/public/css/branch.css">
+<div class="ui modal" id="branch-container">
+    <i class="close icon"></i>
+    <div class="header">
+        选择需要发布的分支
+    </div>
+    <div class="branch-content">
+        <div id="branch-selector" class="ui selection dropdown">
+            <input type="hidden" name="gender">
+            <i class="dropdown icon"></i>
+            <div class="default text">Gender</div>
+            <div class="menu"></div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            暂不发布
+        </div>
+        <div class="ui positive right labeled icon button" onclick="handlePublishClick()">
+            发布！
+            <i class="checkmark icon"></i>
+        </div>
+    </div>
+    <script src="/public/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/public/lib/components/transition.min.js"></script>
+    <script src="/public/lib/components/dropdown.min.js"></script>
+</div>
+<script>
+    let branch = ''
+    let currentEnv = ''
+
+    $('.ui.dropdown').dropdown({
+        onChange: (val, text) => {
+            branch = text
+        }
+    })
+
+    function attachLoading(isLoading){
+        const dom = $("#branch-selector")
+
+        isLoading ? dom.addClass("loading") : dom.removeClass("loading")
+    }
+
+    function loading(){
+        attachLoading(true)
+    }
+
+    function endLoading(){
+        attachLoading(false)
+    }
+
+    function showBranch(env){
+        currentEnv = env
+        loading()
+
+        $("#branch-container").modal('show')
+        $.get("http://localhost:3000/branches", (data) => {
+            endLoading()
+            const {branches} = JSON.parse(data)
+            let content = ''
+
+            for(const b of branches){
+                content += `<div class="item">${b}</div>`
+            }
+
+            $(".menu").html(content)
+        })
+    }
+
+    function handlePublishClick(){
+        if(currentEnv === "" || branch === ""){
+            return
+        }
+
+        $.post("http://localhost:3000/task/add", {env:currentEnv, branch})
+                .done(() => setTerminals())
+    }
+</script>
+{{ end }}
