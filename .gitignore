@@ -1,1 +1,7 @@
 .idea
+
+public/lib/**/*
+
+go.sum
+
+publisher
