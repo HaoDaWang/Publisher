@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func SendTpl(res http.ResponseWriter, filename string, data ...interface{}){
+func SendTpl(res http.ResponseWriter, filenames []string, funcs template.FuncMap, data ...interface{}){
 	var tplData interface{}
 
 	if len(data) == 0 {
@@ -15,9 +15,24 @@ func SendTpl(res http.ResponseWriter, filename string, data ...interface{}){
 		tplData = data[0]
 	}
 
-	var tplPath = fmt.Sprintf("templates/%s.html", filename)
+	var tplPaths []string
 
-	t := template.Must(template.ParseFiles(tplPath))
+	for _, name := range filenames {
+		tplPaths = append(tplPaths, fmt.Sprintf("templates/%s.html", name))
+	}
 
-	t.ExecuteTemplate(res, filename, tplData)
+	//tpl, err := template.New(tplPath).Funcs(template.FuncMap{
+	//	"say": func() int {
+	//		fmt.Println("say")
+	//		return 1
+	//	},
+	//}).ParseFiles(tplPaths...)
+
+	tpl := template.Must(template.New("index").Funcs(funcs).ParseFiles(tplPaths...))
+
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+
+	tpl.ExecuteTemplate(res, "index", tplData)
 }
