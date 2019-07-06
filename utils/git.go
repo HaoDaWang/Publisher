@@ -45,3 +45,7 @@ func formatBranchName(branches storer.ReferenceIter) []string {
 
 	return branchNames
 }
+
+func GetProjectName() string {
+	return "/Users/haodawang/Documents/repositories/edu-saas-workbench"
+}
