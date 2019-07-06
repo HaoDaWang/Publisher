@@ -8,7 +8,7 @@ import (
 )
 
 func GetBranches(res http.ResponseWriter, req *http.Request){
-	projectUrl := utils.GitProject("/Users/haodawang/Documents/repositories/edu-saas-workbench")
+	projectUrl := utils.GitProject(utils.GetProjectName())
 	data := JSON.H{
 		"branches": projectUrl.GetRemoteBranchNames(),
 	}

@@ -1,7 +1,6 @@
 {{ define "branch" }}
 <link rel="stylesheet" href="/public/css/branch.css">
 <div class="ui modal" id="branch-container">
-    <i class="close icon"></i>
     <div class="header">
         选择需要发布的分支
     </div>
@@ -22,6 +21,7 @@
             <i class="checkmark icon"></i>
         </div>
     </div>
+    <script src="/public/js/index.js"></script>
     <script src="/public/lib/jquery/dist/jquery.min.js"></script>
     <script src="/public/lib/components/transition.min.js"></script>
     <script src="/public/lib/components/dropdown.min.js"></script>
@@ -55,7 +55,7 @@
         loading()
 
         $("#branch-container").modal('show')
-        $.get("http://localhost:3000/branches", (data) => {
+        $.get(`${SERVER}/branches`, (data) => {
             endLoading()
             const {branches} = JSON.parse(data)
             let content = ''
@@ -73,7 +73,7 @@
             return
         }
 
-        $.post("http://localhost:3000/task/add", {env:currentEnv, branch})
+        $.post(`${SERVER}/task/add`, {env:currentEnv, branch})
                 .done(() => setTerminals())
     }
 </script>

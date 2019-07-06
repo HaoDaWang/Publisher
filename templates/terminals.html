@@ -1,17 +1,14 @@
 {{ define "terminals" }}
-<div class="output-panel">
-
-</div>
+<div class="output-panel"></div>
 <script>
     setTerminals()
 
     function setTerminals(){
-        $.get("http://localhost:3000/task/all", data => {
+        $.get(`${SERVER}/task/all`, data => {
             const {tasks} = JSON.parse(data)
-            let content = '<div class="empty">Nothing to show.</div>'
+            let content = ""
 
             for(const {Name, Log, Id} of (tasks || []).reverse()){
-                content = ''
                 content += `
                         <div class="window" id="${Id}">
                             <div class="window-header">
@@ -28,12 +25,12 @@
                         </div>`
             }
 
-            $(".output-panel").html(content)
+            $(".output-panel").html(content === "" ? `` :content)
         })
     }
 
     function handleCloseClick(id){
-        $.post(`http://localhost:3000/task/remove`, {id}).done(() => setTerminals())
+        $.post(`${SERVER}/task/remove`, {id}).done(() => setTerminals())
     }
 
     function handleMinClick(id){
